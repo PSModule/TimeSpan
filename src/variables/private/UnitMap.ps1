@@ -55,7 +55,7 @@ $script:UnitMap = [ordered]@{
     'Minutes'      = @{
         Singular     = 'minute'
         Plural       = 'minutes'
-        Abbreviation = 'm'
+        Abbreviation = 'min'
         Ticks        = [System.TimeSpan]::TicksPerMinute
     }
     'Seconds'      = @{
@@ -73,7 +73,7 @@ $script:UnitMap = [ordered]@{
     'Microseconds' = @{
         Singular     = 'microsecond'
         Plural       = 'microseconds'
-        Abbreviation = 'us'
+        Abbreviation = "$([char]0x00B5)s"
         Ticks        = 10
     }
 }

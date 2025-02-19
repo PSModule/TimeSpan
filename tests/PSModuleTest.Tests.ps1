@@ -33,6 +33,16 @@
                 $result = [TimeSpan]::FromMinutes(2) | Format-TimeSpan -BaseUnit 'Seconds'
                 $result | Should -Be '120s'
             }
+            # Test micro seconds
+            It 'Format-TimeSpan - Forces formatting in microseconds' {
+                $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -FullNames
+                $result | Should -Be '1000 microseconds'
+            }
+            # Test microsecond abbreviation
+            It 'Format-TimeSpan - Forces formatting in microseconds with abbreviation' {
+                $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds'
+                $result | Should -Be '1000µs'
+            }
         }
     }
 }
