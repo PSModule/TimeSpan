@@ -49,7 +49,7 @@
     param(
         # The numerical value to be formatted with a unit.
         [Parameter(Mandatory)]
-        [int] $Value,
+        [System.Int128] $Value,
 
         # The unit type to append to the value.
         [Parameter(Mandatory)]
