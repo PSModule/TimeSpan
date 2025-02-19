@@ -24,7 +24,7 @@
         Context 'Format-TimeSpan - Negative TimeSpan' {
             It 'Format-TimeSpan - Formats negative 5 minutes correctly' {
                 $result = New-TimeSpan -Minutes -5 | Format-TimeSpan
-                $result | Should -Be '-5m'
+                $result | Should -Be '-5min'
             }
         }
 
