@@ -69,7 +69,7 @@
     process {
         $isNegative = $TimeSpan.Ticks -lt 0
         if ($isNegative) {
-            $TimeSpan = New-TimeSpan -Ticks (-1 * $TimeSpan.Ticks)
+            $TimeSpan = [System.TimeSpan]::FromTicks(-1 * $TimeSpan.Ticks)
         }
         $originalTicks = $TimeSpan.Ticks
 
