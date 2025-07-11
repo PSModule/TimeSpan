@@ -5,22 +5,10 @@
 
         .DESCRIPTION
         This function takes an integer value and a unit and returns a formatted string.
-        If the -FullNames switch is specified, the function uses the singular or plural full unit name.
-        If the -UseSymbols switch is specified, the function uses symbols instead of abbreviations.
-        Otherwise, it returns the value with the unit abbreviation.
+        The format can be specified as Symbol, Abbreviation, FullName, or FullNameWithAlternative.
 
         .EXAMPLE
-        Format-UnitValue -Value 5 -Unit 'Hours'
-
-        Output:
-        ```powershell
-        5hr
-        ```
-
-        Returns the formatted value with its abbreviation.
-
-        .EXAMPLE
-        Format-UnitValue -Value 5 -Unit 'Hours' -UseSymbols
+        Format-UnitValue -Value 5 -Unit 'Hours' -Format Symbol
 
         Output:
         ```powershell
@@ -30,7 +18,17 @@
         Returns the formatted value with its symbol.
 
         .EXAMPLE
-        Format-UnitValue -Value 1 -Unit 'Hours' -FullNames
+        Format-UnitValue -Value 5 -Unit 'Hours' -Format Abbreviation
+
+        Output:
+        ```powershell
+        5hr
+        ```
+
+        Returns the formatted value with its abbreviation.
+
+        .EXAMPLE
+        Format-UnitValue -Value 1 -Unit 'Hours' -Format FullName
 
         Output:
         ```powershell
@@ -40,7 +38,7 @@
         Returns the formatted value with the full singular unit name.
 
         .EXAMPLE
-        Format-UnitValue -Value 2 -Unit 'Hours' -FullNames
+        Format-UnitValue -Value 2 -Unit 'Hours' -Format FullName
 
         Output:
         ```powershell
@@ -49,8 +47,18 @@
 
         Returns the formatted value with the full plural unit name.
 
+        .EXAMPLE
+        Format-UnitValue -Value 5 -Unit 'Hours' -Format FullNameWithAlternative
+
+        Output:
+        ```powershell
+        5 hours/hour
+        ```
+
+        Returns the formatted value with both plural and singular forms.
+
         .OUTPUTS
-        string. A formatted string combining the value and its corresponding unit abbreviation, symbol, or full name.
+        string. A formatted string combining the value and its corresponding unit in the specified format.
 
         .LINK
         https://psmodule.io/Format/Functions/Format-UnitValue/
@@ -66,24 +74,29 @@
         [Parameter(Mandatory)]
         [string] $Unit,
 
-        # Switch to use full unit names instead of abbreviations or symbols.
+        # The format for displaying the unit.
         [Parameter()]
-        [switch] $FullNames,
-
-        # Switch to use symbols instead of abbreviations.
-        [Parameter()]
-        [switch] $UseSymbols
+        [ValidateSet('Symbol', 'Abbreviation', 'FullName', 'FullNameWithAlternative')]
+        [string] $Format = 'Symbol'
     )
 
-    if ($FullNames) {
-        # Choose singular or plural form based on the value.
-        $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
-        return "$Value $unitName"
-    }
-
-    if ($UseSymbols) {
-        "$Value$($script:UnitMap[$Unit].Symbol)"
-    } else {
-        "$Value$($script:UnitMap[$Unit].Abbreviation)"
+    switch ($Format) {
+        'FullName' {
+            # Choose singular or plural form based on the value.
+            $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
+            return "$Value $unitName"
+        }
+        'FullNameWithAlternative' {
+            # Show both plural and singular forms.
+            $plural = $script:UnitMap[$Unit].Plural
+            $singular = $script:UnitMap[$Unit].Singular
+            return "$Value $plural/$singular"
+        }
+        'Abbreviation' {
+            return "$Value$($script:UnitMap[$Unit].Abbreviation)"
+        }
+        'Symbol' {
+            return "$Value$($script:UnitMap[$Unit].Symbol)"
+        }
     }
 }

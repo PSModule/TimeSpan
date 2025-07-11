@@ -5,48 +5,48 @@
 
         .DESCRIPTION
         This function converts a TimeSpan object into a formatted string based on a chosen unit or precision.
-        It allows specifying a base unit, the number of precision levels, and whether to use full unit names,
-        symbols, or abbreviations. If the TimeSpan is negative, it is prefixed with a minus sign.
+        It allows specifying a base unit, the number of precision levels, and the format for displaying units.
+        If the TimeSpan is negative, it is prefixed with a minus sign.
 
         .EXAMPLE
         New-TimeSpan -Minutes 90 | Format-TimeSpan
 
         Output:
         ```powershell
-        2hr
-        ```
-
-        Formats the given TimeSpan into a human-readable format using the most significant unit.
-
-        .EXAMPLE
-        New-TimeSpan -Minutes 90 | Format-TimeSpan -UseSymbols
-
-        Output:
-        ```powershell
         2h
         ```
 
-        Formats the given TimeSpan using symbols instead of abbreviations.
+        Formats the given TimeSpan into a human-readable format using the most significant unit with symbols (default).
 
         .EXAMPLE
-        [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -FullNames
+        New-TimeSpan -Minutes 90 | Format-TimeSpan -Format Abbreviation
+
+        Output:
+        ```powershell
+        2hr
+        ```
+
+        Formats the given TimeSpan using abbreviations instead of symbols.
+
+        .EXAMPLE
+        [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -Format FullName
 
         Output:
         ```powershell
         1 hour 1 minute
         ```
 
-        Returns the TimeSpan formatted into multiple components based on the specified precision.
+        Returns the TimeSpan formatted into multiple components using full unit names.
 
         .EXAMPLE
-        [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Precision 2 -FullNames
+        [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Precision 2 -Format FullNameWithAlternative
 
         Output:
         ```powershell
-        500 milliseconds 0 microseconds
+        500 milliseconds/millisecond 0 microseconds/microsecond
         ```
 
-        Forces the output to be formatted in milliseconds, regardless of precision.
+        Returns the TimeSpan formatted using the full name with alternative format.
 
         .OUTPUTS
         System.String
@@ -71,13 +71,10 @@
         [Parameter()]
         [string] $BaseUnit,
 
-        # If specified, outputs full unit names instead of abbreviations or symbols.
+        # Specifies the format for displaying time units.
         [Parameter()]
-        [switch] $FullNames,
-
-        # If specified, uses symbols instead of abbreviations for unit formatting.
-        [Parameter()]
-        [switch] $UseSymbols
+        [ValidateSet('Symbol', 'Abbreviation', 'FullName', 'FullNameWithAlternative')]
+        [string] $Format = 'Symbol'
     )
 
     process {
@@ -110,7 +107,7 @@
 
             $fractionalValue = $originalTicks / $script:UnitMap[$chosenUnit].Ticks
             $roundedValue = [math]::Round($fractionalValue, 0, [System.MidpointRounding]::AwayFromZero)
-            $formatted = Format-UnitValue -value $roundedValue -unit $chosenUnit -FullNames:$FullNames -UseSymbols:$UseSymbols
+            $formatted = Format-UnitValue -value $roundedValue -unit $chosenUnit -Format $Format
             if ($isNegative) { $formatted = "-$formatted" }
             return $formatted
         } else {
@@ -139,7 +136,7 @@
                     $value = [math]::Floor($remainder / $unitTicks)
                 }
                 $remainder = $remainder - ($value * $unitTicks)
-                $resultSegments += Format-UnitValue -value $value -unit $unit -FullNames:$FullNames -UseSymbols:$UseSymbols
+                $resultSegments += Format-UnitValue -value $value -unit $unit -Format $Format
             }
             $formatted = $resultSegments -join ' '
             if ($isNegative) { $formatted = "-$formatted" }
