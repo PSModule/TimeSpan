@@ -43,7 +43,7 @@
 
         Output:
         ```powershell
-        500 milliseconds/millisecond 0 microseconds/microsecond
+        500 milliseconds 0 microseconds
         ```
 
         Returns the TimeSpan formatted using the full name with alternative format.
@@ -102,7 +102,7 @@
                         $chosenUnit = $unit; break
                     }
                 }
-                if (-not $chosenUnit) { $chosenUnit = 'Nanoseconds' }
+                if (-not $chosenUnit) { $chosenUnit = 'Microseconds' }
             }
 
             $fractionalValue = $originalTicks / $script:UnitMap[$chosenUnit].Ticks

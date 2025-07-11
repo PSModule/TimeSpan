@@ -52,10 +52,10 @@
 
         Output:
         ```powershell
-        5 hours/hour
+        5 hours
         ```
 
-        Returns the formatted value with both plural and singular forms.
+        Returns the formatted value choosing the appropriate singular or plural form.
 
         .OUTPUTS
         string. A formatted string combining the value and its corresponding unit in the specified format.
@@ -87,10 +87,9 @@
             return "$Value $unitName"
         }
         'FullNameWithAlternative' {
-            # Show both plural and singular forms.
-            $plural = $script:UnitMap[$Unit].Plural
-            $singular = $script:UnitMap[$Unit].Singular
-            return "$Value $plural/$singular"
+            # Choose singular or plural form based on the value.
+            $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
+            return "$Value $unitName"
         }
         'Abbreviation' {
             return "$Value$($script:UnitMap[$Unit].Abbreviation)"

@@ -88,11 +88,4 @@ $script:UnitMap = [ordered]@{
         Symbol       = "$([char]0x00B5)s"
         Ticks        = 10
     }
-    'Nanoseconds'  = @{
-        Singular     = 'nanosecond'
-        Plural       = 'nanoseconds'
-        Abbreviation = 'nsec'
-        Symbol       = 'ns'
-        Ticks        = 1
-    }
 }
