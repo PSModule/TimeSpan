@@ -1,9 +1,15 @@
-﻿Describe 'TimeSpan' {
+﻿BeforeAll {
+    . $PSScriptRoot/../src/variables/private/UnitMap.ps1
+    . $PSScriptRoot/../src/functions/private/Format-UnitValue.ps1
+    . $PSScriptRoot/../src/functions/public/Format-TimeSpan.ps1
+}
+
+Describe 'TimeSpan' {
     Describe 'Format-TimeSpan' {
         Context 'Format-TimeSpan - Basic Usage' {
-            It 'Format-TimeSpan - Formats 90 minutes as 2h' {
+            It 'Format-TimeSpan - Formats 90 minutes as 2hr' {
                 $result = New-TimeSpan -Minutes 90 | Format-TimeSpan
-                $result | Should -Be '2h'
+                $result | Should -Be '2hr'
             }
         }
 
@@ -31,7 +37,7 @@
         Context 'Format-TimeSpan - BaseUnit' {
             It 'Format-TimeSpan - Forces formatting in seconds' {
                 $result = [TimeSpan]::FromMinutes(2) | Format-TimeSpan -BaseUnit 'Seconds'
-                $result | Should -Be '120s'
+                $result | Should -Be '120sec'
             }
             # Test micro seconds
             It 'Format-TimeSpan - Forces formatting in microseconds' {
@@ -41,7 +47,49 @@
             # Test microsecond abbreviation
             It 'Format-TimeSpan - Forces formatting in microseconds with abbreviation' {
                 $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds'
+                $result | Should -Be '1000usec'
+            }
+        }
+
+        Context 'Format-TimeSpan - UseSymbols' {
+            It 'Format-TimeSpan - Formats 90 minutes using symbols' {
+                $result = New-TimeSpan -Minutes 90 | Format-TimeSpan -UseSymbols
+                $result | Should -Be '2h'
+            }
+            
+            It 'Format-TimeSpan - Formats 5 minutes using symbols' {
+                $result = New-TimeSpan -Minutes 5 | Format-TimeSpan -UseSymbols
+                $result | Should -Be '5m'
+            }
+            
+            It 'Format-TimeSpan - Formats seconds using symbols' {
+                $result = [TimeSpan]::FromMinutes(2) | Format-TimeSpan -BaseUnit 'Seconds' -UseSymbols
+                $result | Should -Be '120s'
+            }
+            
+            It 'Format-TimeSpan - Formats microseconds using symbols' {
+                $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -UseSymbols
                 $result | Should -Be '1000µs'
+            }
+            
+            It 'Format-TimeSpan - Formats negative 5 minutes using symbols' {
+                $result = New-TimeSpan -Minutes -5 | Format-TimeSpan -UseSymbols
+                $result | Should -Be '-5m'
+            }
+
+            It 'Format-TimeSpan - Formats days using symbols' {
+                $result = New-TimeSpan -Days 3 | Format-TimeSpan -UseSymbols
+                $result | Should -Be '3d'
+            }
+
+            It 'Format-TimeSpan - Formats weeks using symbols' {
+                $result = New-TimeSpan -Days 14 | Format-TimeSpan -UseSymbols
+                $result | Should -Be '2wk'
+            }
+
+            It 'Format-TimeSpan - Formats milliseconds using symbols' {
+                $result = [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -UseSymbols
+                $result | Should -Be '500ms'
             }
         }
     }

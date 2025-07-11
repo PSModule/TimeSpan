@@ -7,73 +7,92 @@ $script:UnitMap = [ordered]@{
     'Millennia'    = @{
         Singular     = 'millennium'
         Plural       = 'millennia'
-        Abbreviation = 'mil'
+        Abbreviation = 'mill'
+        Symbol       = 'kyr'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:AverageDaysInYear * 1000
     }
     'Centuries'    = @{
         Singular     = 'century'
         Plural       = 'centuries'
         Abbreviation = 'cent'
+        Symbol       = 'c'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:AverageDaysInYear * 100
     }
     'Decades'      = @{
         Singular     = 'decade'
         Plural       = 'decades'
         Abbreviation = 'dec'
+        Symbol       = 'dec'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:AverageDaysInYear * 10
     }
     'Years'        = @{
         Singular     = 'year'
         Plural       = 'years'
-        Abbreviation = 'y'
+        Abbreviation = 'yr'
+        Symbol       = 'y'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:AverageDaysInYear
     }
     'Months'       = @{
         Singular     = 'month'
         Plural       = 'months'
-        Abbreviation = 'mo'
+        Abbreviation = 'mon'
+        Symbol       = 'mo'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:AverageDaysInMonth
     }
     'Weeks'        = @{
         Singular     = 'week'
         Plural       = 'weeks'
-        Abbreviation = 'w'
+        Abbreviation = 'wk'
+        Symbol       = 'wk'
         Ticks        = [System.TimeSpan]::TicksPerDay * $script:DaysInWeek
     }
     'Days'         = @{
         Singular     = 'day'
         Plural       = 'days'
-        Abbreviation = 'd'
+        Abbreviation = 'day'
+        Symbol       = 'd'
         Ticks        = [System.TimeSpan]::TicksPerDay
     }
     'Hours'        = @{
         Singular     = 'hour'
         Plural       = 'hours'
-        Abbreviation = 'h'
+        Abbreviation = 'hr'
+        Symbol       = 'h'
         Ticks        = [System.TimeSpan]::TicksPerHour
     }
     'Minutes'      = @{
         Singular     = 'minute'
         Plural       = 'minutes'
         Abbreviation = 'min'
+        Symbol       = 'm'
         Ticks        = [System.TimeSpan]::TicksPerMinute
     }
     'Seconds'      = @{
         Singular     = 'second'
         Plural       = 'seconds'
-        Abbreviation = 's'
+        Abbreviation = 'sec'
+        Symbol       = 's'
         Ticks        = [System.TimeSpan]::TicksPerSecond
     }
     'Milliseconds' = @{
         Singular     = 'millisecond'
         Plural       = 'milliseconds'
-        Abbreviation = 'ms'
+        Abbreviation = 'msec'
+        Symbol       = 'ms'
         Ticks        = [System.TimeSpan]::TicksPerMillisecond
     }
     'Microseconds' = @{
         Singular     = 'microsecond'
         Plural       = 'microseconds'
-        Abbreviation = "$([char]0x00B5)s"
+        Abbreviation = 'usec'
+        Symbol       = "$([char]0x00B5)s"
         Ticks        = 10
+    }
+    'Nanoseconds'  = @{
+        Singular     = 'nanosecond'
+        Plural       = 'nanoseconds'
+        Abbreviation = 'nsec'
+        Symbol       = 'ns'
+        Ticks        = 1
     }
 }
