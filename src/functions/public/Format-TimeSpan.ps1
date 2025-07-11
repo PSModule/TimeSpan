@@ -38,15 +38,7 @@
 
         Returns the TimeSpan formatted into multiple components using full unit names.
 
-        .EXAMPLE
-        [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Precision 2 -Format FullNameWithAlternative
 
-        Output:
-        ```powershell
-        500 milliseconds 0 microseconds
-        ```
-
-        Returns the TimeSpan formatted using the full name with alternative format.
 
         .OUTPUTS
         System.String
@@ -73,7 +65,7 @@
 
         # Specifies the format for displaying time units.
         [Parameter()]
-        [ValidateSet('Symbol', 'Abbreviation', 'FullName', 'FullNameWithAlternative')]
+        [ValidateSet('Symbol', 'Abbreviation', 'FullName')]
         [string] $Format = 'Symbol'
     )
 

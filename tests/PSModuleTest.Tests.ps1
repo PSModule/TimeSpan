@@ -97,15 +97,7 @@ Describe 'TimeSpan' {
                 $result | Should -Be '500ms'
             }
 
-            It 'Format-TimeSpan - Formats using FullNameWithAlternative format' {
-                $result = New-TimeSpan -Minutes 5 | Format-TimeSpan -Format FullNameWithAlternative
-                $result | Should -Be '5 minutes'
-            }
 
-            It 'Format-TimeSpan - Formats using FullNameWithAlternative format with precision' {
-                $result = [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -Format FullNameWithAlternative
-                $result | Should -Be '1 hour 1 minute'
-            }
         }
     }
 }

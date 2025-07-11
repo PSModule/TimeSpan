@@ -47,15 +47,7 @@
 
         Returns the formatted value with the full plural unit name.
 
-        .EXAMPLE
-        Format-UnitValue -Value 5 -Unit 'Hours' -Format FullNameWithAlternative
 
-        Output:
-        ```powershell
-        5 hours
-        ```
-
-        Returns the formatted value choosing the appropriate singular or plural form.
 
         .OUTPUTS
         string. A formatted string combining the value and its corresponding unit in the specified format.
@@ -76,17 +68,12 @@
 
         # The format for displaying the unit.
         [Parameter()]
-        [ValidateSet('Symbol', 'Abbreviation', 'FullName', 'FullNameWithAlternative')]
+        [ValidateSet('Symbol', 'Abbreviation', 'FullName')]
         [string] $Format = 'Symbol'
     )
 
     switch ($Format) {
         'FullName' {
-            # Choose singular or plural form based on the value.
-            $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
-            return "$Value $unitName"
-        }
-        'FullNameWithAlternative' {
             # Choose singular or plural form based on the value.
             $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
             return "$Value $unitName"
