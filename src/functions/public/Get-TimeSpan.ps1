@@ -1,63 +1,74 @@
 function Get-TimeSpan {
     <#
         .SYNOPSIS
-        Gets a TimeSpan representing the difference between a target DateTime and the current time.
+        Gets a TimeSpan representing the difference between two DateTime values.
 
         .DESCRIPTION
-        This function calculates the time difference between a specified target DateTime and the current time.
-        By default, it calculates Target - Now, which gives a positive value for future times and negative for past times.
-        The function can return zero for negative values or the actual negative TimeSpan based on the AllowNegative parameter.
-        It can also calculate elapsed time (age) by using the AsAge parameter, which calculates Now - Target.
+        This function calculates the time difference between a Start DateTime and End DateTime.
+        By default, both Start and End parameters default to the current time ([DateTime]::Now).
+        If neither Start nor End is provided (both use defaults), the function returns TimeSpan.Zero.
+        The function allows negative values by default, but can return zero for negative values using the StopAtZero parameter.
 
         .EXAMPLE
         $futureTime = [DateTime]::Now.AddMinutes(30)
-        Get-TimeSpan -Target $futureTime
+        Get-TimeSpan -End $futureTime
 
         Output:
         ```powershell
         00:30:00
         ```
 
-        Returns a TimeSpan representing 30 minutes until the target time.
+        Returns a TimeSpan representing 30 minutes until the end time.
 
         .EXAMPLE
         $pastTime = [DateTime]::Now.AddMinutes(-30)
-        Get-TimeSpan -Target $pastTime
-
-        Output:
-        ```powershell
-        00:00:00
-        ```
-
-        Returns TimeSpan.Zero since the target time is in the past and AllowNegative is not specified.
-
-        .EXAMPLE
-        $pastTime = [DateTime]::Now.AddMinutes(-30)
-        Get-TimeSpan -Target $pastTime -AllowNegative
+        Get-TimeSpan -End $pastTime
 
         Output:
         ```powershell
         -00:30:00
         ```
 
-        Returns a negative TimeSpan showing the target time was 30 minutes ago.
+        Returns a negative TimeSpan showing the end time was 30 minutes ago.
 
         .EXAMPLE
-        $pastTime = [DateTime]::Now.AddHours(-2)
-        Get-TimeSpan -Target $pastTime -AsAge
+        $pastTime = [DateTime]::Now.AddMinutes(-30)
+        Get-TimeSpan -End $pastTime -StopAtZero
+
+        Output:
+        ```powershell
+        00:00:00
+        ```
+
+        Returns TimeSpan.Zero since the result would be negative and StopAtZero is specified.
+
+        .EXAMPLE
+        $startTime = [DateTime]::Now.AddHours(-2)
+        $endTime = [DateTime]::Now
+        Get-TimeSpan -Start $startTime -End $endTime
 
         Output:
         ```powershell
         02:00:00
         ```
 
-        Returns a positive TimeSpan showing the age/elapsed time since the target.
+        Returns a positive TimeSpan showing the duration between start and end times.
+
+        .EXAMPLE
+        Get-TimeSpan
+
+        Output:
+        ```powershell
+        00:00:00
+        ```
+
+        Returns TimeSpan.Zero when both Start and End use their default values.
 
         .OUTPUTS
         System.TimeSpan
 
         .NOTES
-        The TimeSpan representing the difference between the target DateTime and now.
+        The TimeSpan representing the difference between the Start and End DateTime values (End - Start).
 
         .LINK
         https://psmodule.io/TimeSpan/Functions/Get-TimeSpan/
@@ -65,30 +76,33 @@ function Get-TimeSpan {
     [CmdletBinding()]
     [OutputType([TimeSpan])]
     param(
-        # The target DateTime to calculate the time difference from.
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [DateTime] $Target,
+        # The start DateTime. Defaults to current time.
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [DateTime] $Start = [DateTime]::Now,
 
-        # If specified, allows returning negative TimeSpan values instead of TimeSpan.Zero for past dates.
-        [Parameter()]
-        [switch] $AllowNegative,
+        # The end DateTime. Defaults to current time.
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [DateTime] $End = [DateTime]::Now,
 
-        # If specified, calculates elapsed time (Now - Target) instead of remaining time (Target - Now).
+        # If specified, returns TimeSpan.Zero instead of negative values.
         [Parameter()]
-        [switch] $AsAge
+        [switch] $StopAtZero
     )
 
     process {
-        if ($AsAge) {
-            # Calculate elapsed time: Now - Target
-            $timeSpan = [DateTime]::Now - $Target
-        } else {
-            # Calculate remaining time: Target - Now
-            $timeSpan = $Target - [DateTime]::Now
+        # Check if both parameters are using their default values
+        $startIsDefault = $PSBoundParameters.Keys -notcontains 'Start'
+        $endIsDefault = $PSBoundParameters.Keys -notcontains 'End'
+        
+        if ($startIsDefault -and $endIsDefault) {
+            return [TimeSpan]::Zero
         }
 
-        # Handle negative values based on AllowNegative parameter
-        if ($timeSpan.TotalSeconds -lt 0 -and -not $AllowNegative) {
+        # Calculate the time difference: End - Start
+        $timeSpan = $End - $Start
+
+        # Handle negative values based on StopAtZero parameter
+        if ($timeSpan.TotalSeconds -lt 0 -and $StopAtZero) {
             return [TimeSpan]::Zero
         }
 

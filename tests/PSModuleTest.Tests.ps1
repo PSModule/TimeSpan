@@ -47,50 +47,64 @@
     }
 
     Describe 'Get-TimeSpan' {
-        Context 'Get-TimeSpan - Future DateTime' {
-            It 'Get-TimeSpan - Returns positive TimeSpan for future datetime' {
+        Context 'Get-TimeSpan - Default Behavior' {
+            It 'Get-TimeSpan - Returns Zero when both Start and End use defaults' {
+                $result = Get-TimeSpan
+                $result | Should -Be ([TimeSpan]::Zero)
+            }
+        }
+
+        Context 'Get-TimeSpan - Future End DateTime' {
+            It 'Get-TimeSpan - Returns positive TimeSpan for future end datetime' {
                 $future = [DateTime]::Now.AddMinutes(30)
-                $result = Get-TimeSpan -Target $future
+                $result = Get-TimeSpan -End $future
                 $result.TotalMinutes | Should -BeGreaterThan 29
                 $result.TotalMinutes | Should -BeLessThan 31
             }
         }
 
-        Context 'Get-TimeSpan - Past DateTime without AllowNegative' {
-            It 'Get-TimeSpan - Returns Zero for past datetime' {
+        Context 'Get-TimeSpan - Past End DateTime' {
+            It 'Get-TimeSpan - Returns negative TimeSpan for past end datetime by default' {
                 $past = [DateTime]::Now.AddMinutes(-30)
-                $result = Get-TimeSpan -Target $past
+                $result = Get-TimeSpan -End $past
+                $result.TotalMinutes | Should -BeLessThan -29
+                $result.TotalMinutes | Should -BeGreaterThan -31
+            }
+
+            It 'Get-TimeSpan - Returns Zero for past end datetime with StopAtZero' {
+                $past = [DateTime]::Now.AddMinutes(-30)
+                $result = Get-TimeSpan -End $past -StopAtZero
                 $result | Should -Be ([TimeSpan]::Zero)
             }
         }
 
-        Context 'Get-TimeSpan - Past DateTime with AllowNegative' {
-            It 'Get-TimeSpan - Returns negative TimeSpan for past datetime when AllowNegative is specified' {
-                $past = [DateTime]::Now.AddMinutes(-30)
-                $result = Get-TimeSpan -Target $past -AllowNegative
-                $result.TotalMinutes | Should -BeLessThan -29
-                $result.TotalMinutes | Should -BeGreaterThan -31
-            }
-        }
-
-        Context 'Get-TimeSpan - AsAge parameter' {
-            It 'Get-TimeSpan - Returns positive elapsed time for past datetime with AsAge' {
-                $past = [DateTime]::Now.AddHours(-2)
-                $result = Get-TimeSpan -Target $past -AsAge
+        Context 'Get-TimeSpan - Start and End Parameters' {
+            It 'Get-TimeSpan - Calculates difference between Start and End' {
+                $start = [DateTime]::Now.AddHours(-2)
+                $end = [DateTime]::Now
+                $result = Get-TimeSpan -Start $start -End $end
                 $result.TotalHours | Should -BeGreaterThan 1.9
                 $result.TotalHours | Should -BeLessThan 2.1
             }
 
-            It 'Get-TimeSpan - Returns negative elapsed time for future datetime with AsAge and AllowNegative' {
-                $future = [DateTime]::Now.AddHours(2)
-                $result = Get-TimeSpan -Target $future -AsAge -AllowNegative
-                $result.TotalHours | Should -BeLessThan -1.9
-                $result.TotalHours | Should -BeGreaterThan -2.1
+            It 'Get-TimeSpan - Returns negative when End is before Start' {
+                $start = [DateTime]::Now
+                $end = [DateTime]::Now.AddHours(-1)
+                $result = Get-TimeSpan -Start $start -End $end
+                $result.TotalHours | Should -BeLessThan -0.9
+                $result.TotalHours | Should -BeGreaterThan -1.1
+            }
+
+            It 'Get-TimeSpan - Returns Zero for negative difference with StopAtZero' {
+                $start = [DateTime]::Now
+                $end = [DateTime]::Now.AddHours(-1)
+                $result = Get-TimeSpan -Start $start -End $end -StopAtZero
+                $result | Should -Be ([TimeSpan]::Zero)
             }
         }
 
         Context 'Get-TimeSpan - Pipeline Support' {
-            It 'Get-TimeSpan - Accepts DateTime from pipeline' {
+            It 'Get-TimeSpan - Accepts DateTime from pipeline as End parameter' {
                 $future = [DateTime]::Now.AddMinutes(15)
                 $result = $future | Get-TimeSpan
                 $result.TotalMinutes | Should -BeGreaterThan 14
@@ -98,12 +112,12 @@
             }
         }
 
-        Context 'Get-TimeSpan - Exact Zero Case' {
-            It 'Get-TimeSpan - Returns Zero for exactly current time' {
-                $now = [DateTime]::Now
-                $result = Get-TimeSpan -Target $now
-                # Allow for small timing differences (should be very close to zero)
-                [Math]::Abs($result.TotalMilliseconds) | Should -BeLessThan 100
+        Context 'Get-TimeSpan - Exact Same Time' {
+            It 'Get-TimeSpan - Returns near Zero for same Start and End times' {
+                $time = [DateTime]::Now
+                $result = Get-TimeSpan -Start $time -End $time
+                # Should be exactly zero for same time
+                $result.TotalMilliseconds | Should -Be 0
             }
         }
     }
