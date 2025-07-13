@@ -1,8 +1,4 @@
-﻿BeforeAll {
-    . $PSScriptRoot/../src/variables/private/UnitMap.ps1
-    . $PSScriptRoot/../src/functions/private/Format-UnitValue.ps1
-    . $PSScriptRoot/../src/functions/public/Format-TimeSpan.ps1
-}
+﻿
 
 Describe 'TimeSpan' {
     Describe 'Format-TimeSpan' {
@@ -44,10 +40,10 @@ Describe 'TimeSpan' {
                 $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -Format FullName
                 $result | Should -Be '1000 microseconds'
             }
-            # Test microsecond abbreviation
-            It 'Format-TimeSpan - Forces formatting in microseconds with abbreviation' {
-                $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -Format Abbreviation
-                $result | Should -Be '1000usec'
+            # Test microsecond symbol
+            It 'Format-TimeSpan - Forces formatting in microseconds with symbol' {
+                $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -Format Symbol
+                $result | Should -Be "1000$([char]0x00B5)s"
             }
         }
 
@@ -91,8 +87,6 @@ Describe 'TimeSpan' {
                 $result = [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Format Symbol
                 $result | Should -Be '500ms'
             }
-
-
         }
     }
 }
