@@ -70,6 +70,29 @@
     )
 
     process {
+        # Helper function to format a value with its unit
+        function Format-UnitValue {
+            param(
+                [System.Int128] $Value,
+                [string] $Unit,
+                [string] $Format
+            )
+            
+            switch ($Format) {
+                'FullName' {
+                    # Choose singular or plural form based on the value.
+                    $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
+                    return "$Value $unitName"
+                }
+                'Abbreviation' {
+                    return "$Value$($script:UnitMap[$Unit].Abbreviation)"
+                }
+                'Symbol' {
+                    return "$Value$($script:UnitMap[$Unit].Symbol)"
+                }
+            }
+        }
+
         $isNegative = $TimeSpan.Ticks -lt 0
         if ($isNegative) {
             $TimeSpan = [System.TimeSpan]::FromTicks(-1 * $TimeSpan.Ticks)
@@ -99,7 +122,7 @@
 
             $fractionalValue = $originalTicks / $script:UnitMap[$chosenUnit].Ticks
             $roundedValue = [math]::Round($fractionalValue, 0, [System.MidpointRounding]::AwayFromZero)
-            $formatted = Format-UnitValue -value $roundedValue -unit $chosenUnit -Format $Format
+            $formatted = Format-UnitValue -Value $roundedValue -Unit $chosenUnit -Format $Format
             if ($isNegative) { $formatted = "-$formatted" }
             return $formatted
         } else {
@@ -128,7 +151,7 @@
                     $value = [math]::Floor($remainder / $unitTicks)
                 }
                 $remainder = $remainder - ($value * $unitTicks)
-                $resultSegments += Format-UnitValue -value $value -unit $unit -Format $Format
+                $resultSegments += Format-UnitValue -Value $value -Unit $unit -Format $Format
             }
             $formatted = $resultSegments -join ' '
             if ($isNegative) { $formatted = "-$formatted" }
