@@ -70,28 +70,6 @@
     )
 
     process {
-        # Helper function to format a value with its unit
-        function Format-UnitValue {
-            param(
-                [System.Int128] $Value,
-                [string] $Unit,
-                [string] $Format
-            )
-            
-            switch ($Format) {
-                'FullName' {
-                    # Choose singular or plural form based on the value.
-                    $unitName = if ($Value -eq 1) { $script:UnitMap[$Unit].Singular } else { $script:UnitMap[$Unit].Plural }
-                    return "$Value $unitName"
-                }
-                'Abbreviation' {
-                    return "$Value$($script:UnitMap[$Unit].Abbreviation)"
-                }
-                'Symbol' {
-                    return "$Value$($script:UnitMap[$Unit].Symbol)"
-                }
-            }
-        }
 
         $isNegative = $TimeSpan.Ticks -lt 0
         if ($isNegative) {
