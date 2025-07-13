@@ -56,27 +56,22 @@ Describe 'TimeSpan' {
                 $result = New-TimeSpan -Minutes 90 | Format-TimeSpan -Format Symbol
                 $result | Should -Be '2h'
             }
-            
             It 'Format-TimeSpan - Formats 90 minutes using abbreviations' {
                 $result = New-TimeSpan -Minutes 90 | Format-TimeSpan -Format Abbreviation
                 $result | Should -Be '2hr'
             }
-            
             It 'Format-TimeSpan - Formats 5 minutes using symbols' {
                 $result = New-TimeSpan -Minutes 5 | Format-TimeSpan -Format Symbol
                 $result | Should -Be '5m'
             }
-            
             It 'Format-TimeSpan - Formats seconds using symbols' {
                 $result = [TimeSpan]::FromMinutes(2) | Format-TimeSpan -BaseUnit 'Seconds' -Format Symbol
                 $result | Should -Be '120s'
             }
-            
             It 'Format-TimeSpan - Formats microseconds using symbols' {
                 $result = [TimeSpan]::FromMilliseconds(1) | Format-TimeSpan -BaseUnit 'Microseconds' -Format Symbol
                 $result | Should -Be '1000µs'
             }
-            
             It 'Format-TimeSpan - Formats negative 5 minutes using symbols' {
                 $result = New-TimeSpan -Minutes -5 | Format-TimeSpan -Format Symbol
                 $result | Should -Be '-5m'
