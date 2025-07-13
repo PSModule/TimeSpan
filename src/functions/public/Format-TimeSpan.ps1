@@ -80,7 +80,7 @@
         # Ordered list of units from most to least significant.
         $orderedUnits = [System.Collections.ArrayList]::new()
         foreach ($key in $script:UnitMap.Keys) {
-            $orderedUnits.Add($key) | Out-Null
+            $null = $orderedUnits.Add($key)
         }
 
         if ($Precision -eq 1) {
