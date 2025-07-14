@@ -5,28 +5,49 @@
 
         .DESCRIPTION
         This function converts a TimeSpan object into a formatted string based on a chosen unit or precision.
-        It allows specifying a base unit, the number of precision levels, and the format for displaying units.
-        If the TimeSpan is negative, it is prefixed with a minus sign.
+        By default, it shows all units that have non-zero values. You can specify a base unit, the number of 
+        precision levels, and the format for displaying units. If the TimeSpan is negative, it is prefixed 
+        with a minus sign.
 
         .EXAMPLE
         New-TimeSpan -Minutes 90 | Format-TimeSpan
 
         Output:
         ```powershell
-        2h
+        1h 30m
         ```
 
-        Formats the given TimeSpan into a human-readable format using the most significant unit with symbols (default).
+        Formats the given TimeSpan showing all non-zero units with symbols (default behavior).
 
         .EXAMPLE
         New-TimeSpan -Minutes 90 | Format-TimeSpan -Format Abbreviation
 
         Output:
         ```powershell
-        2hr
+        1hr 30min
         ```
 
-        Formats the given TimeSpan using abbreviations instead of symbols.
+        Formats the given TimeSpan showing all non-zero units using abbreviations instead of symbols.
+
+        .EXAMPLE
+        New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName
+
+        Output:
+        ```powershell
+        2 hours 30 minutes 10 seconds
+        ```
+
+        Shows all non-zero units in full name format.
+
+        .EXAMPLE
+        New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName -IncludeZeroValues
+
+        Output:
+        ```powershell
+        2 hours 30 minutes 10 seconds 0 milliseconds 0 microseconds
+        ```
+
+        Shows all units including those with zero values when the IncludeZeroValues switch is used.
 
         .EXAMPLE
         [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -Format FullName
@@ -36,7 +57,17 @@
         1 hour 1 minute
         ```
 
-        Returns the TimeSpan formatted into multiple components using full unit names.
+        Returns the TimeSpan formatted into exactly 2 components using full unit names.
+
+        .EXAMPLE
+        New-TimeSpan -Minutes 90 | Format-TimeSpan -Precision 1
+
+        Output:
+        ```powershell
+        2h
+        ```
+
+        When precision is explicitly set to 1, uses the traditional behavior of showing only the most significant unit (rounded).
 
 
 
@@ -55,7 +86,7 @@
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [TimeSpan] $TimeSpan,
 
-        # Specifies the number of precision levels to include in the output.
+        # Specifies the number of precision levels to include in the output. If not specified, automatically shows all units with non-zero values.
         [Parameter()]
         [int] $Precision,
 
@@ -68,7 +99,7 @@
         [ValidateSet('Symbol', 'Abbreviation', 'FullName')]
         [string] $Format = 'Symbol',
 
-        # Includes units with zero values in the output.
+        # Includes units with zero values in the output. By default, only non-zero units are shown.
         [Parameter()]
         [switch] $IncludeZeroValues
     )
