@@ -84,8 +84,8 @@ $script:UnitMap = [ordered]@{
     'Microseconds' = @{
         Singular     = 'microsecond'
         Plural       = 'microseconds'
-        Abbreviation = 'usec'
-        Symbol       = "$([char]0x00B5)s"
+        Abbreviation = 'µsec'
+        Symbol       = "µs"
         Ticks        = 10
     }
 }
