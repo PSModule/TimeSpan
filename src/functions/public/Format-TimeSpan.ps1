@@ -115,28 +115,12 @@
             $null = $orderedUnits.Add($key)
         }
 
-        # If Precision is not specified, calculate it based on non-zero units or all units if IncludeZeroValues
-        if ($PSBoundParameters.ContainsKey('Precision') -eq $false) {
-            if ($IncludeZeroValues) {
-                # Include all units when IncludeZeroValues is specified
-                $Precision = $orderedUnits.Count
-            } else {
-                # Calculate how many units have non-zero values
-                $nonZeroUnits = 0
-                $remainder = $originalTicks
-
-                foreach ($unit in $orderedUnits) {
-                    $unitTicks = $script:UnitMap[$unit].Ticks
-                    $value = [math]::Floor($remainder / $unitTicks)
-                    if ($value -gt 0) {
-                        $nonZeroUnits++
-                    }
-                    $remainder = $remainder - ($value * $unitTicks)
-                }
-
-                # Set precision to the number of non-zero units, minimum 1
-                $Precision = [Math]::Max($nonZeroUnits, 1)
-            }
+        # If Precision is not specified, set behavior for auto-precision mode
+        $autoPrecisionMode = $PSBoundParameters.ContainsKey('Precision') -eq $false
+        if ($autoPrecisionMode) {
+            # For auto-precision mode, process all units regardless of IncludeZeroValues
+            # The filtering of zero values is handled later in the logic
+            $Precision = $orderedUnits.Count
         }
 
         if ($Precision -eq 1) {
@@ -188,6 +172,7 @@
 
                 # When precision is explicitly specified, include values even if they're zero
                 # When precision is not specified and IncludeZeroValues is false, only include non-zero values
+                # When precision is not specified and IncludeZeroValues is true, include all values
                 $shouldInclude = ($value -gt 0) -or $IncludeZeroValues -or ($PSBoundParameters.ContainsKey('Precision'))
                 if ($shouldInclude) {
                     $resultSegments += Format-UnitValue -Value $value -Unit $unit -Format $Format

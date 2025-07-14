@@ -121,5 +121,22 @@ Describe 'TimeSpan' {
                 $result | Should -Be '500ms'
             }
         }
+
+        Context 'Format-TimeSpan - Zero Values in Middle (Issue #11)' {
+            It 'Format-TimeSpan - Handles zero values in the middle correctly (issue #11)' {
+                $result = New-TimeSpan -Hours 2 -Minutes 0 -Seconds 10 | Format-TimeSpan
+                $result | Should -Be '2h 10s'
+            }
+
+            It 'Format-TimeSpan - Handles multiple zero gaps correctly' {
+                $result = New-TimeSpan -Hours 1 -Milliseconds 500 | Format-TimeSpan
+                $result | Should -Be '1h 500ms'
+            }
+
+            It 'Format-TimeSpan - Handles zero values between days and minutes' {
+                $result = New-TimeSpan -Days 2 -Minutes 30 | Format-TimeSpan
+                $result | Should -Be '2d 30m'
+            }
+        }
     }
 }
