@@ -129,7 +129,7 @@ Describe 'TimeSpan' {
             }
 
             It 'Format-TimeSpan - Handles multiple zero gaps correctly' {
-                $result = New-TimeSpan -Hours 1 -Milliseconds 500 | Format-TimeSpan  
+                $result = New-TimeSpan -Hours 1 -Milliseconds 500 | Format-TimeSpan
                 $result | Should -Be '1h 500ms'
             }
 
