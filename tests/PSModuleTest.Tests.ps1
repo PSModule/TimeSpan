@@ -1,10 +1,4 @@
 ﻿
-BeforeAll {
-    . "$PSScriptRoot/../src/variables/private/UnitMap.ps1"
-    . "$PSScriptRoot/../src/functions/private/Format-UnitValue.ps1"
-    . "$PSScriptRoot/../src/functions/public/Format-TimeSpan.ps1"
-}
-
 Describe 'TimeSpan' {
     Describe 'Format-TimeSpan' {
         Context 'Format-TimeSpan - Basic Usage' {

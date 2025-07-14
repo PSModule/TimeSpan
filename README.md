@@ -10,28 +10,16 @@ This module uses the [PSModule framework](https://github.com/PSModule) for build
 
 To install the module from the PowerShell Gallery, you can use the following commands:
 
-### For PowerShell 5.1 and later
-```powershell
-Install-Module -Name TimeSpan -Repository PSGallery
-Import-Module -Name TimeSpan
-```
-
-### For PowerShell 7+ with PSResourceGet
 ```powershell
 Install-PSResource -Name TimeSpan
 Import-Module -Name TimeSpan
 ```
 
-### For the latest version
-```powershell
-Install-Module -Name TimeSpan -Force
-```
-
 ## Usage
 
-The primary function in this module is `Format-TimeSpan`, which converts TimeSpan objects into human-readable formatted strings.
+### Example 1: Basic formatting with all non-zero units
 
-### Example 1: Basic formatting with all non-zero units (new default behavior)
+This example shows the default behavior of `Format-TimeSpan`, which converts TimeSpan objects into human-readable formatted strings showing all units that have non-zero values.
 
 ```powershell
 New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName
@@ -39,6 +27,8 @@ New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName
 ```
 
 ### Example 2: Including zero values
+
+Use the `IncludeZeroValues` parameter to include units with zero values in the output, showing all time units from the highest non-zero unit down to the smallest unit.
 
 ```powershell
 New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName -IncludeZeroValues
