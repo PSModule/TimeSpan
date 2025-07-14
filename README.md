@@ -1,6 +1,6 @@
 # TimeSpan
 
-A PowerShell module for formatting TimeSpan objects into human-readable strings with customizable precision and formatting options.
+A PowerShell module to manage and build functionality on top of the TimeSpan object.
 
 ## Prerequisites
 
@@ -37,6 +37,8 @@ New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName
 
 ### Example 3: Using different format styles
 
+The Format-TimeSpan function supports three different format styles to display time units in various ways.
+
 ```powershell
 # Symbol format (default)
 New-TimeSpan -Minutes 90 | Format-TimeSpan
@@ -53,6 +55,8 @@ New-TimeSpan -Minutes 90 | Format-TimeSpan -Format FullName
 
 ### Example 4: Explicit precision (backward compatibility)
 
+You can specify an exact number of time units to display using the Precision parameter, which maintains backward compatibility with previous versions.
+
 ```powershell
 # Show only the most significant unit (rounded)
 New-TimeSpan -Minutes 90 | Format-TimeSpan -Precision 1
@@ -64,6 +68,8 @@ New-TimeSpan -Minutes 90 | Format-TimeSpan -Precision 1
 ```
 
 ### Example 5: Force specific base unit
+
+Use the BaseUnit parameter to force formatting from a specific time unit, regardless of the actual values in the TimeSpan.
 
 ```powershell
 [TimeSpan]::FromMinutes(2) | Format-TimeSpan -BaseUnit 'Seconds'
@@ -77,27 +83,34 @@ To find more examples of how to use the module, please refer to the [examples](e
 Alternatively, you can use `Get-Command -Module TimeSpan` to find more commands that are available in the module.
 To find examples of each of the commands you can use `Get-Help -Examples Format-TimeSpan`.
 
-## Parameters
-
-### Format-TimeSpan
-
-- **TimeSpan** (Required): The TimeSpan object to format
-- **Precision** (Optional): Number of units to include in output. If not specified, shows all non-zero units
-- **BaseUnit** (Optional): Force formatting from a specific unit (e.g., 'Seconds', 'Minutes')
-- **Format** (Optional): Display format - 'Symbol' (default), 'Abbreviation', or 'FullName'
-- **IncludeZeroValues** (Switch): Include units with zero values in the output
-
 ## Supported Time Units
 
 The module supports formatting for the following time units (from largest to smallest):
-- Millennia, Centuries, Decades, Years, Months, Weeks, Days, Hours, Minutes, Seconds, Milliseconds, Microseconds
+
+| Unit | Singular | Plural | Abbreviation | Symbol |
+|------|----------|--------|--------------|--------|
+| Millennia | millennium | millennia | mill | kyr |
+| Centuries | century | centuries | cent | c |
+| Decades | decade | decades | dec | dec |
+| Years | year | years | yr | y |
+| Months | month | months | mon | mo |
+| Weeks | week | weeks | wk | wk |
+| Days | day | days | day | d |
+| Hours | hour | hours | hr | h |
+| Minutes | minute | minutes | min | m |
+| Seconds | second | seconds | sec | s |
+| Milliseconds | millisecond | milliseconds | msec | ms |
+| Microseconds | microsecond | microseconds | µsec | µs |
 
 ## Documentation
 
 For detailed function documentation, use:
 ```powershell
 Get-Help Format-TimeSpan -Full
+Get-Help Format-TimeSpan -Online
 ```
+
+You can also use the `-Online` parameter to get the function documentation online. While in VSCode, users can move the cursor to a function and press `Shift+F1` to get to the online documentation.
 
 ## Contributing
 
