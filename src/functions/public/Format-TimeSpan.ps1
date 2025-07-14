@@ -118,14 +118,9 @@
         # If Precision is not specified, set behavior for auto-precision mode
         $autoPrecisionMode = $PSBoundParameters.ContainsKey('Precision') -eq $false
         if ($autoPrecisionMode) {
-            if ($IncludeZeroValues) {
-                # Include all units when IncludeZeroValues is specified
-                $Precision = $orderedUnits.Count
-            } else {
-                # For auto-precision without IncludeZeroValues, we'll process all units
-                # but only include non-zero values. Set precision to maximum to process all.
-                $Precision = $orderedUnits.Count
-            }
+            # For auto-precision mode, process all units regardless of IncludeZeroValues
+            # The filtering of zero values is handled later in the logic
+            $Precision = $orderedUnits.Count
         }
 
         if ($Precision -eq 1) {
