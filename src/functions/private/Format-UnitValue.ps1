@@ -1,4 +1,4 @@
-function Format-UnitValue {
+﻿function Format-UnitValue {
     <#
         .SYNOPSIS
         Formats a numerical value with its corresponding unit.
