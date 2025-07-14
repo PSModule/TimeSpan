@@ -5,7 +5,7 @@
 
         .DESCRIPTION
         This function converts a TimeSpan object into a formatted string based on a chosen unit or precision.
-        It allows specifying a base unit, the number of precision levels, and whether to use full unit names.
+        It allows specifying a base unit, the number of precision levels, and the format for displaying units.
         If the TimeSpan is negative, it is prefixed with a minus sign.
 
         .EXAMPLE
@@ -16,27 +16,29 @@
         2h
         ```
 
-        Formats the given TimeSpan into a human-readable format using the most significant unit.
+        Formats the given TimeSpan into a human-readable format using the most significant unit with symbols (default).
 
         .EXAMPLE
-        [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -FullNames
+        New-TimeSpan -Minutes 90 | Format-TimeSpan -Format Abbreviation
+
+        Output:
+        ```powershell
+        2hr
+        ```
+
+        Formats the given TimeSpan using abbreviations instead of symbols.
+
+        .EXAMPLE
+        [TimeSpan]::FromSeconds(3661) | Format-TimeSpan -Precision 2 -Format FullName
 
         Output:
         ```powershell
         1 hour 1 minute
         ```
 
-        Returns the TimeSpan formatted into multiple components based on the specified precision.
+        Returns the TimeSpan formatted into multiple components using full unit names.
 
-        .EXAMPLE
-        [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Precision 2 -FullNames
 
-        Output:
-        ```powershell
-        500 milliseconds 0 microseconds
-        ```
-
-        Forces the output to be formatted in milliseconds, regardless of precision.
 
         .OUTPUTS
         System.String
@@ -61,9 +63,10 @@
         [Parameter()]
         [string] $BaseUnit,
 
-        # If specified, outputs full unit names instead of abbreviations.
+        # Specifies the format for displaying time units.
         [Parameter()]
-        [switch] $FullNames
+        [ValidateSet('Symbol', 'Abbreviation', 'FullName')]
+        [string] $Format = 'Symbol'
     )
 
     process {
@@ -74,7 +77,10 @@
         $originalTicks = $TimeSpan.Ticks
 
         # Ordered list of units from most to least significant.
-        $orderedUnits = @($script:UnitMap.Keys)
+        $orderedUnits = [System.Collections.ArrayList]::new()
+        foreach ($key in $script:UnitMap.Keys) {
+            $null = $orderedUnits.Add($key)
+        }
 
         if ($Precision -eq 1) {
             # For precision=1, use the "fractional" approach.
@@ -93,7 +99,7 @@
 
             $fractionalValue = $originalTicks / $script:UnitMap[$chosenUnit].Ticks
             $roundedValue = [math]::Round($fractionalValue, 0, [System.MidpointRounding]::AwayFromZero)
-            $formatted = Format-UnitValue -value $roundedValue -unit $chosenUnit -FullNames:$FullNames
+            $formatted = Format-UnitValue -Value $roundedValue -Unit $chosenUnit -Format $Format
             if ($isNegative) { $formatted = "-$formatted" }
             return $formatted
         } else {
@@ -122,7 +128,7 @@
                     $value = [math]::Floor($remainder / $unitTicks)
                 }
                 $remainder = $remainder - ($value * $unitTicks)
-                $resultSegments += Format-UnitValue -value $value -unit $unit -FullNames:$FullNames
+                $resultSegments += Format-UnitValue -Value $value -Unit $unit -Format $Format
             }
             $formatted = $resultSegments -join ' '
             if ($isNegative) { $formatted = "-$formatted" }
