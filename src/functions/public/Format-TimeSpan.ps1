@@ -57,7 +57,7 @@
 
         # Specifies the number of precision levels to include in the output.
         [Parameter()]
-        [int] $Precision = 1,
+        [int] $Precision,
 
         # Specifies the base unit to use for formatting the TimeSpan.
         [Parameter()]
@@ -66,7 +66,11 @@
         # Specifies the format for displaying time units.
         [Parameter()]
         [ValidateSet('Symbol', 'Abbreviation', 'FullName')]
-        [string] $Format = 'Symbol'
+        [string] $Format = 'Symbol',
+
+        # Includes units with zero values in the output.
+        [Parameter()]
+        [switch] $IncludeZeroValues
     )
 
     process {
@@ -80,6 +84,30 @@
         $orderedUnits = [System.Collections.ArrayList]::new()
         foreach ($key in $script:UnitMap.Keys) {
             $null = $orderedUnits.Add($key)
+        }
+
+        # If Precision is not specified, calculate it based on non-zero units or all units if IncludeZeroValues
+        if ($PSBoundParameters.ContainsKey('Precision') -eq $false) {
+            if ($IncludeZeroValues) {
+                # Include all units when IncludeZeroValues is specified
+                $Precision = $orderedUnits.Count
+            } else {
+                # Calculate how many units have non-zero values
+                $nonZeroUnits = 0
+                $remainder = $originalTicks
+                
+                foreach ($unit in $orderedUnits) {
+                    $unitTicks = $script:UnitMap[$unit].Ticks
+                    $value = [math]::Floor($remainder / $unitTicks)
+                    if ($value -gt 0) {
+                        $nonZeroUnits++
+                    }
+                    $remainder = $remainder - ($value * $unitTicks)
+                }
+                
+                # Set precision to the number of non-zero units, minimum 1
+                $Precision = [Math]::Max($nonZeroUnits, 1)
+            }
         }
 
         if ($Precision -eq 1) {
@@ -128,7 +156,13 @@
                     $value = [math]::Floor($remainder / $unitTicks)
                 }
                 $remainder = $remainder - ($value * $unitTicks)
-                $resultSegments += Format-UnitValue -Value $value -Unit $unit -Format $Format
+                
+                # When precision is explicitly specified, include values even if they're zero
+                # When precision is not specified and IncludeZeroValues is false, only include non-zero values
+                $shouldInclude = ($value -gt 0) -or $IncludeZeroValues -or ($PSBoundParameters.ContainsKey('Precision'))
+                if ($shouldInclude) {
+                    $resultSegments += Format-UnitValue -Value $value -Unit $unit -Format $Format
+                }
             }
             $formatted = $resultSegments -join ' '
             if ($isNegative) { $formatted = "-$formatted" }
