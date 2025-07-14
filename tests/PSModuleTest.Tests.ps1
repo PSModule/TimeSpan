@@ -51,17 +51,17 @@ Describe 'TimeSpan' {
                 $result = New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName
                 $result | Should -Be '2 hours 30 minutes 10 seconds'
             }
-            
+
             It 'Format-TimeSpan - Shows zero values when IncludeZeroValues is specified' {
                 $result = New-TimeSpan -Hours 2 -Minutes 30 -Seconds 10 | Format-TimeSpan -Format FullName -IncludeZeroValues
                 $result | Should -Be '2 hours 30 minutes 10 seconds 0 milliseconds 0 microseconds'
             }
-            
+
             It 'Format-TimeSpan - Single unit without IncludeZeroValues' {
                 $result = [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Format FullName
                 $result | Should -Be '500 milliseconds'
             }
-            
+
             It 'Format-TimeSpan - Single unit with IncludeZeroValues' {
                 $result = [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Format FullName -IncludeZeroValues
                 $result | Should -Be '500 milliseconds 0 microseconds'
@@ -73,7 +73,7 @@ Describe 'TimeSpan' {
                 $result = New-TimeSpan -Minutes 90 | Format-TimeSpan -Precision 1
                 $result | Should -Be '2h'
             }
-            
+
             It 'Format-TimeSpan - Explicit precision with zero values still shows zeros' {
                 $result = [TimeSpan]::FromMilliseconds(500) | Format-TimeSpan -Precision 2 -Format FullName
                 $result | Should -Be '500 milliseconds 0 microseconds'
