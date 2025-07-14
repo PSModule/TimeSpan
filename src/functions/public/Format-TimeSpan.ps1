@@ -5,8 +5,8 @@
 
         .DESCRIPTION
         This function converts a TimeSpan object into a formatted string based on a chosen unit or precision.
-        By default, it shows all units that have non-zero values. You can specify a base unit, the number of 
-        precision levels, and the format for displaying units. If the TimeSpan is negative, it is prefixed 
+        By default, it shows all units that have non-zero values. You can specify a base unit, the number of
+        precision levels, and the format for displaying units. If the TimeSpan is negative, it is prefixed
         with a minus sign.
 
         .EXAMPLE
@@ -69,8 +69,6 @@
 
         When precision is explicitly set to 1, uses the traditional behavior of showing only the most significant unit (rounded).
 
-
-
         .OUTPUTS
         System.String
 
@@ -126,7 +124,7 @@
                 # Calculate how many units have non-zero values
                 $nonZeroUnits = 0
                 $remainder = $originalTicks
-                
+
                 foreach ($unit in $orderedUnits) {
                     $unitTicks = $script:UnitMap[$unit].Ticks
                     $value = [math]::Floor($remainder / $unitTicks)
@@ -135,7 +133,7 @@
                     }
                     $remainder = $remainder - ($value * $unitTicks)
                 }
-                
+
                 # Set precision to the number of non-zero units, minimum 1
                 $Precision = [Math]::Max($nonZeroUnits, 1)
             }
@@ -187,7 +185,7 @@
                     $value = [math]::Floor($remainder / $unitTicks)
                 }
                 $remainder = $remainder - ($value * $unitTicks)
-                
+
                 # When precision is explicitly specified, include values even if they're zero
                 # When precision is not specified and IncludeZeroValues is false, only include non-zero values
                 $shouldInclude = ($value -gt 0) -or $IncludeZeroValues -or ($PSBoundParameters.ContainsKey('Precision'))
