@@ -19,7 +19,7 @@ Use PowerShell help and command discovery for module details:
 
 ```powershell
 Get-Command -Module TimeSpan
-Get-Help <CommandName> -Examples
+Get-Help Format-TimeSpan -Examples
 ```
 
 ## Contributing
