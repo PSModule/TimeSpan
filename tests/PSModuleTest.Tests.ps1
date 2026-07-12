@@ -1,4 +1,6 @@
-﻿
+﻿#Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '6.0.0'; MaximumVersion = '6.*' }
+
+
 Describe 'TimeSpan' {
     Describe 'Format-TimeSpan' {
         Context 'Format-TimeSpan - Basic Usage' {
